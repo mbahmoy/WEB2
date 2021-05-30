@@ -1,47 +1,58 @@
 <?php
-session_start(); // Start session nya
+include('library.php');
+$lib = new Library();
+$data_siswa = $lib->show();
 
-// Kita cek apakah user sudah login atau belum
-// Cek nya dengan cara cek apakah terdapat session username atau tidak
-if (isset($_SESSION['username'])) { // Jika session username ada berarti dia sudah login
-	header("location: welcome.php"); // Kita Redirect ke halaman welcome.php
+if (isset($_GET['hapus_siswa'])) {
+    $kd_siswa = $_GET['hapus_siswa'];
+    $status_hapus = $lib->delete($kd_siswa);
+    if ($status_hapus) {
+        header('Location: index.php');
+    }
 }
 ?>
-
 <html>
 
 <head>
-	<title>Login</title>
-	<style>
-		* {
-			font-family: sans-serif;
-		}
-	</style>
+    <title></title>
+    <link rel="stylesheet" href="bootstrap.min.css">
 </head>
 
 <body>
-	<h1>Silahkan login terlebih dahulu...</h1>
-
-	<div style="color: red;margin-bottom: 15px;">
-		<?php
-		// Cek apakah terdapat cookie dengan nama message
-		if (isset($_COOKIE["message"])) { // Jika ada
-			echo $_COOKIE["message"]; // Tampilkan pesannya
-		}
-		?>
-	</div>
-	<div class="card_login">
-		<form method="post" action="login.php">
-			<label>Username</label><br>
-			<input type="text" name="username" placeholder="Username"><br><br>
-
-			<label>Password</label><br>
-			<input type="password" name="password" placeholder="Password"><br><br>
-
-			<button type="submit">Login</button>
-		</form>
-	</div>
-
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h3>Data Siswa</h3>
+            </div>
+            <div class="card-body">
+                <a href="form_add.php" class="btn btn-success">Tambah</a>
+                <hr />
+                <table class="table table-bordered" width="60%">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Jurusan</th>
+                        <th>Alamat</th>
+                        <th>Action</th>
+                    </tr>
+                    <?php
+                    $no = 1;
+                    foreach ($data_siswa as $row) {
+                        echo "<tr>";
+                        echo "<td>" . $no . "</td>";
+                        echo "<td>" . $row['nama_siswa'] . "</td>";
+                        echo "<td>" . $row['kelas'] . "</td>";
+                        echo "<td>" . $row['alamat'] . "</td>";
+                        echo "<td><a class='btn btn-info' href='form_edit.php?kd_siswa=" . $row['kd_siswa'] . "'>Update</a>
+                        <a class='btn btn-danger' href='index.php?hapus_siswa=" . $row['kd_siswa'] . "'>Hapus</a></td>";
+                        echo "</tr>";
+                        $no++;
+                    }
+                    ?>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
